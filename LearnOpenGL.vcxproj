@@ -24,7 +24,7 @@
     <ProjectGuid>{cf0dc960-cc93-40db-be02-5214f95fed77}</ProjectGuid>
     <RootNamespace>LearnOpenGL</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>openglStarterProject</ProjectName>
+    <ProjectName>infraredObjectDetection</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -155,6 +155,10 @@
     <None Include="shader_purple.frag" />
     <None Include="shader.vert" />
     <None Include="shader_red.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="shader_texture.frag" />
+    <Text Include="shader_texture.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

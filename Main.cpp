@@ -74,19 +74,48 @@ int main() {
 		return -1;
 	}
 
-	// floor rect
-	glm::vec3 floor_position = glm::vec3(0, 0, 0);
-	glm::vec2 floor_size = glm::vec2(WINDOW_WIDTH, 100);
-	Shape2D floor_rect = ShapeGenerator::getRectangle(floor_position, floor_size);
+	// load thermal image from desktop
+	unsigned int thermal_texture;
+	glGenTextures(1, &thermal_texture);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, thermal_texture);
+	// Configure texture wrapping / filtering
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Load texture image
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(false);
+	unsigned char* data = stbi_load("thermal_image.jpg", &width, &height, &nrChannels, 0);
+	// Connect the texture with the image
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture 0" << std::endl;
+	}
+	// Free the image memory after generating the texture
+	stbi_image_free(data);
 
-	// player rect
-	glm::vec3 player_position = { WINDOW_WIDTH / 2, 100, 0.1f };
-	glm::vec2 player_size = {150, 150};
-	Shape2D player_rect = ShapeGenerator::getOutline(player_position, player_size, 5);
+	// Background rectangle
+	glm::vec3 bg_position = glm::vec3(0, 0, 0);
+	glm::vec2 bg_size = glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+	Shape2D bg_rect = ShapeGenerator::getRectangle(bg_position, bg_size);
+
+	// Detection outline
+	glm::vec3 outline_position = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0.1f };
+	glm::vec2 outline_size = {150, 150};
+	Shape2D detection_outline = ShapeGenerator::getOutline(outline_position, outline_size, 5);
 
 	// Using the shaders
 	Shader shader_purple("shader.vert", "shader_purple.frag");
 	Shader shader_red("shader.vert", "shader_red.frag");
+	Shader shader_texture("shader_texture.vert", "shader_texture.frag");
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -109,6 +138,10 @@ int main() {
 		shader_red.use();
 		shader_red.setMat4("projection_matrix", projection_matrix);
 
+		shader_texture.use();
+		shader_texture.setMat4("projection_matrix", projection_matrix);
+		shader_texture.setInt("texture1", 0);
+
 
 		// Rendering commands here:
 		glClearColor(0.529f, 0.808f, 0.922f, 1.0f);
@@ -116,11 +149,11 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-		shader_purple.use();
-		floor_rect.draw();
+		shader_texture.use();
+		bg_rect.draw();
 
 		shader_red.use();
-		player_rect.draw();
+		detection_outline.draw();
 
 		// Check and call events and swap the buffers
 		glfwSwapBuffers(window);
