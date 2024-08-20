@@ -63,18 +63,7 @@ void initialSetup() {
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-
-int main() {
-
-	try {
-		initialSetup();
-	}
-	catch (std::exception& e) {
-		std::cout << "Exception: " << e.what() << std::endl;
-		return -1;
-	}
-
-	// load thermal image from desktop
+void loadTextureFromJpg(const char* path, int texture_index_const) {
 	unsigned int thermal_texture;
 	glGenTextures(1, &thermal_texture);
 	glActiveTexture(GL_TEXTURE0);
@@ -88,7 +77,7 @@ int main() {
 	// Load texture image
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(false);
-	unsigned char* data = stbi_load("thermal_image.jpg", &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
 	// Connect the texture with the image
 	if (data)
 	{
@@ -97,10 +86,25 @@ int main() {
 	}
 	else
 	{
-		std::cout << "Failed to load texture 0" << std::endl;
+		std::cout << "Failed to load texture: "<< path << std::endl;
 	}
 	// Free the image memory after generating the texture
 	stbi_image_free(data);
+}
+
+
+int main() {
+
+	try {
+		initialSetup();
+	}
+	catch (std::exception& e) {
+		std::cout << "Exception: " << e.what() << std::endl;
+		return -1;
+	}
+
+	// load thermal image from desktop
+	loadTextureFromJpg("thermal_image.jpg", 0);
 
 	// Background rectangle
 	glm::vec3 bg_position = glm::vec3(0, 0, 0);
