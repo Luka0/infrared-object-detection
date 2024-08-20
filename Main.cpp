@@ -60,7 +60,7 @@ void initialSetup() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	// Hide mouse cursor and lock it to center of the window
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void loadTextureFromJpg(const char* path, int texture_index_const) {
