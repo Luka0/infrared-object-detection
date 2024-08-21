@@ -1,0 +1,34 @@
+#version 430 core
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+layout(rgba8, binding = 1) uniform image2D output_texture;
+
+
+vec4 getNewPixel(vec4 old_pixel) {
+	vec4 new_pixel;
+	float cutoff = 0.75;
+
+	if (old_pixel.r >= cutoff) {
+		new_pixel.rgb = vec3(1.0);
+	}
+	else {
+		new_pixel.rgb = vec3(0.0);
+	}
+
+	return new_pixel;
+}
+
+
+void main() {
+	ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 image_size = imageSize(output_texture);
+
+	// ignore off-screen texels
+	if (texelCoord.x >= image_size.x || texelCoord.y >= image_size.y) {
+		return;
+	}
+
+	// handle current pixel value
+	vec4 pixel = imageLoad(output_texture, texelCoord);
+	imageStore(output_texture, texelCoord, getNewPixel(pixel));
+}

@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shape2D.h"
 #include "ShapeGenerator.h"
+#include "ComputeShader.h"
 
 // window settings
 #define WINDOW_WIDTH 1280
@@ -66,7 +67,7 @@ void initialSetup() {
 void loadTextureFromJpg(const char* path, int texture_index_const) {
 	unsigned int thermal_texture;
 	glGenTextures(1, &thermal_texture);
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(texture_index_const);
 	glBindTexture(GL_TEXTURE_2D, thermal_texture);
 	// Configure texture wrapping / filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -104,7 +105,7 @@ int main() {
 	}
 
 	// load thermal image from desktop
-	loadTextureFromJpg("thermal_image.jpg", 0);
+	loadTextureFromJpg("thermal_image.jpg", GL_TEXTURE0);
 
 	// Background rectangle
 	glm::vec3 bg_position = glm::vec3(0, 0, 0);
@@ -120,6 +121,9 @@ int main() {
 	Shader shader_purple("shader.vert", "shader_purple.frag");
 	Shader shader_red("shader.vert", "shader_red.frag");
 	Shader shader_texture("shader_texture.vert", "shader_texture.frag");
+
+	// Compute shader setup
+	ComputeShader thresholdComputeShader("thresholding_shader.comp");
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))

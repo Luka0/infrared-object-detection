@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonStructs.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Shape2D.h" />
     <ClInclude Include="Shader.h" />
@@ -155,6 +156,7 @@
     <None Include="shader_purple.frag" />
     <None Include="shader.vert" />
     <None Include="shader_red.frag" />
+    <None Include="thresholding_shader.comp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="shader_texture.frag" />

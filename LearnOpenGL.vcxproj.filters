@@ -47,11 +47,15 @@
     <ClInclude Include="ShapeGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.vert" />
     <None Include="shader_purple.frag" />
     <None Include="shader_red.frag" />
+    <None Include="thresholding_shader.comp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="shader_texture.vert" />
