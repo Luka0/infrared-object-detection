@@ -13,3 +13,10 @@ struct Mesh {
 	std::vector<Vertex> vertices;
 	std::vector<int> indices;
 };
+
+struct TextureData {
+	unsigned int id;
+	int width;
+	int height;
+	int channels_count;
+};

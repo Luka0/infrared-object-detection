@@ -12,6 +12,8 @@
 #include "Shape2D.h"
 #include "ShapeGenerator.h"
 #include "ComputeShader.h"
+#include "CommonStructs.h"
+
 
 // window settings
 #define WINDOW_WIDTH 1280
@@ -36,7 +38,7 @@ void processInput(GLFWwindow* window)
 void initialSetup() {
 	// Instantiating the GLFW window
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -64,11 +66,11 @@ void initialSetup() {
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void loadTextureFromJpg(const char* path, int texture_index_const) {
-	unsigned int thermal_texture;
-	glGenTextures(1, &thermal_texture);
+TextureData loadTextureFromJpg(const char* path, int texture_index_const) {
+	unsigned int new_texture;
+	glGenTextures(1, &new_texture);
 	glActiveTexture(texture_index_const);
-	glBindTexture(GL_TEXTURE_2D, thermal_texture);
+	glBindTexture(GL_TEXTURE_2D, new_texture);
 	// Configure texture wrapping / filtering
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -78,11 +80,20 @@ void loadTextureFromJpg(const char* path, int texture_index_const) {
 	// Load texture image
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(false);
-	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);	// 0 is default
 	// Connect the texture with the image
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		// convert rgb to rgba
+		unsigned char* rgba_data = new unsigned char[width * height * 4];
+		for (int i = 0; i < width * height; i++) {
+			rgba_data[i * 4 + 0] = data[i * 3 + 0];  // R
+			rgba_data[i * 4 + 1] = data[i * 3 + 1];  // G
+			rgba_data[i * 4 + 2] = data[i * 3 + 2];  // B
+			rgba_data[i * 4 + 3] = 255;              // A (fully opaque)
+		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba_data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -91,6 +102,8 @@ void loadTextureFromJpg(const char* path, int texture_index_const) {
 	}
 	// Free the image memory after generating the texture
 	stbi_image_free(data);
+
+	return { new_texture, width, height, nrChannels };
 }
 
 
@@ -105,7 +118,7 @@ int main() {
 	}
 
 	// load thermal image from desktop
-	loadTextureFromJpg("thermal_image.jpg", GL_TEXTURE0);
+	TextureData thermal_tex = loadTextureFromJpg("thermal_image.jpg", GL_TEXTURE0);
 
 	// Background rectangle
 	glm::vec3 bg_position = glm::vec3(0, 0, 0);
@@ -124,6 +137,10 @@ int main() {
 
 	// Compute shader setup
 	ComputeShader thresholdComputeShader("thresholding_shader.comp");
+	thresholdComputeShader.use();
+	glBindImageTexture(1, thermal_tex.id, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+	glDispatchCompute(thermal_tex.width / 16, thermal_tex.height / 16, 1);
+	glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
