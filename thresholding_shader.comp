@@ -3,6 +3,27 @@
 layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 layout(rgba8, binding = 1) uniform image2D output_texture;
 
+int countSurroundingWarmPixels(ivec2 texel_coord, ivec2 image_size) {
+	ivec2 detection_size = ivec2(100, 100);
+	int counter = 0;
+	ivec2 current_coord;
+	float cutoff = 0.75;
+
+	for (int i = -detection_size.x/2; i <= detection_size.x/2; i++) {
+		for (int j = -detection_size.y/2; j <= detection_size.y/2; j++) {
+			current_coord.x = texel_coord.x + i;
+			current_coord.y = texel_coord.y + j;
+			// check if coords are inside the image
+			if (texel_coord.x <= image_size.x - 1 && texel_coord.x >= 0 && texel_coord.y <= image_size.y && texel_coord.y >= 0){
+				vec4 pixel = imageLoad(output_texture, current_coord);
+				if (pixel.r >= cutoff) {
+					counter++;
+				}
+			}
+		}
+	}
+	return counter;
+}
 
 vec4 getNewPixel(vec4 old_pixel) {
 	vec4 new_pixel;
@@ -19,15 +40,19 @@ vec4 getNewPixel(vec4 old_pixel) {
 }
 
 void main() {
-	ivec2 texelCoord = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 texel_coord = ivec2(gl_GlobalInvocationID.xy);
 	ivec2 image_size = imageSize(output_texture);
 
 	// ignore off-screen texels
-	if (texelCoord.x >= image_size.x || texelCoord.y >= image_size.y) {
+	if (texel_coord.x >= image_size.x || texel_coord.y >= image_size.y) {
 		return;
 	}
 
 	// handle current pixel value
-	vec4 pixel = imageLoad(output_texture, texelCoord);
-	imageStore(output_texture, texelCoord, getNewPixel(pixel));
+	vec4 pixel = imageLoad(output_texture, texel_coord);
+	vec4 new_pixel;
+	if (countSurroundingWarmPixels(texel_coord, image_size) >= 100*100*0.05f) {
+		imageStore(output_texture, texel_coord, vec4(pixel.r, 0.5, 0.0, 1.0));
+	}
+	//imageStore(output_texture, texel_coord, getNewPixel(pixel));
 }

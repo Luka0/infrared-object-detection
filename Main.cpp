@@ -16,8 +16,8 @@
 
 
 // window settings
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 640 * 2
+#define WINDOW_HEIGHT 480 * 2
 GLFWwindow* window;
 
 // frame timing
@@ -127,7 +127,7 @@ int main() {
 
 	// Detection outline
 	glm::vec3 outline_position = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0.1f };
-	glm::vec2 outline_size = {150, 150};
+	glm::vec2 outline_size = {200, 200};
 	Shape2D detection_outline = ShapeGenerator::getOutline(outline_position, outline_size, 5);
 
 	// Using the shaders
