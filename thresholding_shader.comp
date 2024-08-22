@@ -30,7 +30,7 @@ vec4 getNewPixel(vec4 old_pixel) {
 	float cutoff = 0.75;
 
 	if (old_pixel.r >= cutoff) {
-		new_pixel.rgb = vec3(1.0);
+		new_pixel.rgb = vec3(1.0); 	
 	}
 	else {
 		new_pixel.rgb = vec3(0.0);
@@ -48,10 +48,15 @@ void main() {
 		return;
 	}
 
-	// handle current pixel value
 	vec4 pixel = imageLoad(output_texture, texel_coord);
+
+	// paint all pixels over a certain treshold
+	// if (pixel.r >= 0.8f) {
+	// 	imageStore(output_texture, texel_coord, vec4(pixel.r, 0.0f, 1.0f, 1.0));
+	// }
+
+	// paint only grous of warm pixels (pixels surrounded by many other warm pixels)
 	if (countSurroundingWarmPixels(texel_coord, image_size) >= 10*10*0.8f) {
 		imageStore(output_texture, texel_coord, vec4(pixel.r, 0.0f, 1.0f, 1.0));
 	}
-	//imageStore(output_texture, texel_coord, getNewPixel(pixel));
 }
