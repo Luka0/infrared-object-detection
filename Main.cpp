@@ -79,7 +79,6 @@ TextureData loadTextureFromJpg(const char* path, int texture_index_const) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// Load texture image
 	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(false);
 	unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);	// 0 is default
 	// Connect the texture with the image
 	if (data)
@@ -118,7 +117,9 @@ int main() {
 	}
 
 	// load thermal image from desktop
-	TextureData thermal_tex = loadTextureFromJpg("thermal_image.jpg", GL_TEXTURE0);
+	//TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/hot_cups/1_45.jpg", GL_TEXTURE0);
+	stbi_set_flip_vertically_on_load(true);
+	TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/drone_shots/drone_1.jpg", GL_TEXTURE0);
 
 	// Background rectangle
 	glm::vec3 bg_position = glm::vec3(0, 0, 0);
@@ -152,7 +153,7 @@ int main() {
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-
+			
 		// Setting uniform values
 		glm::mat4 projection_matrix = glm::mat4();
 		projection_matrix = glm::ortho(0.0f, float(WINDOW_WIDTH), 0.0f, float(WINDOW_HEIGHT));
@@ -177,8 +178,8 @@ int main() {
 		shader_texture.use();
 		bg_rect.draw();
 
-		shader_red.use();
-		detection_outline.draw();
+		//shader_red.use();
+		//detection_outline.draw();
 
 		// Check and call events and swap the buffers
 		glfwSwapBuffers(window);

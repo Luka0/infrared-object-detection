@@ -162,6 +162,40 @@
     <Text Include="shader_texture.frag" />
     <Text Include="shader_texture.vert" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_1.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_2.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_3.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_4.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_5.jfif" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_42.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_43.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_44.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_45.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_46.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_47.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_48.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_49.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_50.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_51.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_52.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_53.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_54.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_55.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_56.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_57.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_58.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_59.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_60.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_61.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_62.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_63.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_64.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_65.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_66.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_67.jpg" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_68.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

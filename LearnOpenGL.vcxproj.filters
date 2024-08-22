@@ -61,4 +61,102 @@
     <Text Include="shader_texture.vert" />
     <Text Include="shader_texture.frag" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_1.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_2.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_3.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_4.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_42.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_43.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_44.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_45.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_46.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_47.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_48.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_49.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_50.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_51.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_52.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_53.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_54.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_55.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_56.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_57.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_58.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_59.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_60.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_61.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_62.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_63.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_64.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_65.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_66.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_67.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_68.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_5.jfif">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
