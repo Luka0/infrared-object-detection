@@ -4,10 +4,10 @@ layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 layout(rgba8, binding = 1) uniform image2D output_texture;
 
 int countSurroundingWarmPixels(ivec2 texel_coord, ivec2 image_size) {
-	ivec2 detection_size = ivec2(25, 25);
+	ivec2 detection_size = ivec2(10, 10);
 	int counter = 0;
 	ivec2 current_coord;
-	float cutoff = 0.75;
+	float cutoff = 0.80;
 
 	for (int i = -detection_size.x/2; i <= detection_size.x/2; i++) {
 		for (int j = -detection_size.y/2; j <= detection_size.y/2; j++) {
@@ -50,11 +50,8 @@ void main() {
 
 	// handle current pixel value
 	vec4 pixel = imageLoad(output_texture, texel_coord);
-	vec4 new_pixel;
-	float blue_value = 25*25 / countSurroundingWarmPixels(texel_coord, image_size);
-	float green_value = 1 - blue_value;
-	if (countSurroundingWarmPixels(texel_coord, image_size) >= 25*25*0.5f) {
-		imageStore(output_texture, texel_coord, vec4(pixel.r, green_value, blue_value, 1.0));
+	if (countSurroundingWarmPixels(texel_coord, image_size) >= 10*10*0.8f) {
+		imageStore(output_texture, texel_coord, vec4(pixel.r, 0.0f, 1.0f, 1.0));
 	}
 	//imageStore(output_texture, texel_coord, getNewPixel(pixel));
 }

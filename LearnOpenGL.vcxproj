@@ -165,9 +165,7 @@
   <ItemGroup>
     <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_1.jpg" />
     <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_2.jpg" />
-    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_3.jpg" />
-    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_4.jpg" />
-    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_5.jfif" />
+    <Image Include="final_thesis_dataset\final_thesis_dataset\drone_shots\drone_3.jfif" />
     <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_42.jpg" />
     <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_43.jpg" />
     <Image Include="final_thesis_dataset\final_thesis_dataset\hot_cups\1_44.jpg" />

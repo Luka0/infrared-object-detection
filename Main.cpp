@@ -117,7 +117,7 @@ int main() {
 	}
 
 	// load thermal image from desktop
-	//TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/hot_cups/1_45.jpg", GL_TEXTURE0);
+	//TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/hot_cups/1_67.jpg", GL_TEXTURE0);
 	stbi_set_flip_vertically_on_load(true);
 	TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/drone_shots/drone_1.jpg", GL_TEXTURE0);
 
