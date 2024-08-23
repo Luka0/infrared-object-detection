@@ -129,9 +129,9 @@ int main() {
 	// Detection outline
 	glm::vec3 outline_position = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0.1f };
 	glm::vec2 outline_size = {200, 200};
-	Shape2D detection_outline = ShapeGenerator::getOutline(outline_position, outline_size, 5);
-	detection_outline = ShapeGenerator::getOutline(outline_position, glm::vec2(400, 200), 5);
-	Shape2D detection_outline2 = ShapeGenerator::getOutline(outline_position, glm::vec2(100, 100), 5);
+	Shape2D test_outline = ShapeGenerator::getOutline(outline_position, outline_size, 5);
+	test_outline = ShapeGenerator::getOutline(outline_position, glm::vec2(100, 200), 5);
+	Shape2D test_outline2 = ShapeGenerator::getOutline(outline_position, glm::vec2(100, 100), 5);
 
 	// Using the shaders
 	Shader shader_purple("shader.vert", "shader_purple.frag");
@@ -158,6 +158,8 @@ int main() {
 	int* ptr = (int*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
 
 	// Retrieve raw detection values from array
+	std::vector<Shape2D*> detection_outlines;
+	Shape2D new_shape = test_outline;
 	if (ptr) {
 		// Assuming the buffer was storing an array of integers
 		for (int i = 0; i < thermal_tex.width*thermal_tex.height; i++) {
@@ -165,6 +167,11 @@ int main() {
 			int x_coord = i % thermal_tex.width;
 			int y_coord = (i - x_coord) / thermal_tex.width;
 			//std::cout << value;
+			if (value == 1) {
+				new_shape = ShapeGenerator::getOutline(glm::vec3(x_coord * 2, y_coord * 2, 0.1), glm::vec2(20, 20), 2);
+				detection_outlines.push_back(&new_shape);
+				//test_outline = ShapeGenerator::getOutline(glm::vec3(x_coord * 2, y_coord * 2, 0.1), glm::vec2(20, 20), 2);
+			}
 		}
 		// Unmap the buffer
 		glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -208,11 +215,18 @@ int main() {
 		shader_texture.use();
 		bg_rect.draw();
 
+		// test
 		shader_red.use();
-		detection_outline.draw();
+		for (Shape2D* var : detection_outlines)
+		{
+			var->draw();
+		}
 
-		shader_red.use();
-		detection_outline2.draw();
+		//shader_red.use();
+		//test_outline.draw();
+
+		//shader_red.use();
+		//detection_outline2.draw();
 
 		// Check and call events and swap the buffers
 		glfwSwapBuffers(window);
