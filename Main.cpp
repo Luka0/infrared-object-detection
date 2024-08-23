@@ -139,9 +139,39 @@ int main() {
 	// Compute shader setup
 	ComputeShader thresholdComputeShader("thresholding_shader.comp");
 	thresholdComputeShader.use();
+
+	GLuint gVBO;
+	glGenBuffers(1, &gVBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, gVBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, thermal_tex.width*thermal_tex.height*sizeof(int), NULL, GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, gVBO);
+
 	glBindImageTexture(1, thermal_tex.id, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
 	glDispatchCompute(thermal_tex.width / 16, thermal_tex.height / 16, 1);
 	glMemoryBarrier(GL_ALL_BARRIER_BITS);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+
+	// fetching output data from compute shader
+	glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+	int* ptr = (int*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+
+	if (ptr) {
+		// Assuming the buffer was storing an array of integers
+		for (int i = 0; i < thermal_tex.width*thermal_tex.height; i++) {
+			int value = ptr[i];
+			// Do something with value
+			std::cout << value;
+		}
+
+		// After you’re done, unmap the buffer
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+	}
+	else {
+		// Handle the error
+		printf("Failed to map buffer.\n");
+	}
+
+	glUnmapBuffer(GL_ARRAY_BUFFER);
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
