@@ -130,6 +130,7 @@ int main() {
 	glm::vec3 outline_position = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0.1f };
 	glm::vec2 outline_size = {200, 200};
 	Shape2D detection_outline = ShapeGenerator::getOutline(outline_position, outline_size, 5);
+	Shape2D detection_outline2 = ShapeGenerator::getOutline(outline_position, glm::vec2(100, 100), 5);
 
 	// Using the shaders
 	Shader shader_purple("shader.vert", "shader_purple.frag");
@@ -155,23 +156,21 @@ int main() {
 	glBindBuffer(GL_ARRAY_BUFFER, gVBO);
 	int* ptr = (int*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
 
+	// Retrieve raw detection values from array
 	if (ptr) {
 		// Assuming the buffer was storing an array of integers
 		for (int i = 0; i < thermal_tex.width*thermal_tex.height; i++) {
 			int value = ptr[i];
-			// Do something with value
+			int x_coord = i % thermal_tex.width;
+			int y_coord = (i - x_coord) / thermal_tex.width;
 			std::cout << value;
 		}
-
-		// After you’re done, unmap the buffer
+		// Unmap the buffer
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
 	else {
-		// Handle the error
 		printf("Failed to map buffer.\n");
 	}
-
-	glUnmapBuffer(GL_ARRAY_BUFFER);
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -208,8 +207,11 @@ int main() {
 		shader_texture.use();
 		bg_rect.draw();
 
-		//shader_red.use();
-		//detection_outline.draw();
+		shader_red.use();
+		detection_outline.draw();
+
+		shader_red.use();
+		detection_outline2.draw();
 
 		// Check and call events and swap the buffers
 		glfwSwapBuffers(window);
