@@ -130,6 +130,7 @@ int main() {
 	glm::vec3 outline_position = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0.1f };
 	glm::vec2 outline_size = {200, 200};
 	Shape2D detection_outline = ShapeGenerator::getOutline(outline_position, outline_size, 5);
+	detection_outline = ShapeGenerator::getOutline(outline_position, glm::vec2(400, 200), 5);
 	Shape2D detection_outline2 = ShapeGenerator::getOutline(outline_position, glm::vec2(100, 100), 5);
 
 	// Using the shaders
@@ -163,7 +164,7 @@ int main() {
 			int value = ptr[i];
 			int x_coord = i % thermal_tex.width;
 			int y_coord = (i - x_coord) / thermal_tex.width;
-			std::cout << value;
+			//std::cout << value;
 		}
 		// Unmap the buffer
 		glUnmapBuffer(GL_ARRAY_BUFFER);
