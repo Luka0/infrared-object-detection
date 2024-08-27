@@ -158,19 +158,18 @@ int main() {
 	int* ptr = (int*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
 
 	// Retrieve raw detection values from array
-	std::vector<Shape2D*> detection_outlines;
-	Shape2D new_shape = test_outline;
+	std::vector<glm::vec2> detection_centers;
 	if (ptr) {
-		// Assuming the buffer was storing an array of integers
+		// TODO: Reduce centers to 1 per object
+		// TODO: Offset all centers by some amount (also multiply by 2 to fit the screen)
+
 		for (int i = 0; i < thermal_tex.width*thermal_tex.height; i++) {
 			int value = ptr[i];
 			int x_coord = i % thermal_tex.width;
 			int y_coord = (i - x_coord) / thermal_tex.width;
 			//std::cout << value;
 			if (value == 1) {
-				new_shape = ShapeGenerator::getOutline(glm::vec3(x_coord * 2, y_coord * 2, 0.1), glm::vec2(20, 20), 2);
-				detection_outlines.push_back(&new_shape);
-				//test_outline = ShapeGenerator::getOutline(glm::vec3(x_coord * 2, y_coord * 2, 0.1), glm::vec2(20, 20), 2);
+				detection_centers.push_back(glm::vec2(x_coord, y_coord));
 			}
 		}
 		// Unmap the buffer
@@ -217,9 +216,11 @@ int main() {
 
 		// test
 		shader_red.use();
-		for (Shape2D* var : detection_outlines)
+		for (glm::vec2 center : detection_centers)
 		{
-			var->draw();
+			center *= glm::vec2(2);
+			Shape2D detection = ShapeGenerator::getOutline(glm::vec3(center, 0.1f), glm::vec2(50, 50), 3);
+			detection.draw();
 		}
 
 		//shader_red.use();
