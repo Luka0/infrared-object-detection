@@ -105,6 +105,30 @@ TextureData loadTextureFromJpg(const char* path, int texture_index_const) {
 	return { new_texture, width, height, nrChannels };
 }
 
+void disable_connected_pixels(int* ptr, int x, int y, int width, int height) {
+	int index = y * width + x;
+	// disable current pixel
+	if (index < width * height) {
+		ptr[index] = 0;
+		// check right neighbour
+		if (x + 1 < width && ptr[y * width + x+1] == 1) {
+			disable_connected_pixels(ptr, x + 1, y, width, height);
+		}
+		// check left neighbour
+		if (x - 1 >= 0 && ptr[y * width + x - 1] == 1) {
+			disable_connected_pixels(ptr, x - 1, y, width, height);
+		}
+		// check top neighbour
+		if (y + 1 < height && ptr[(y+1) * width + x] == 1) {
+			disable_connected_pixels(ptr, x, y + 1, width, height);
+		}
+		// check bottom neighbour
+		if (y - 1 >= 0 && ptr[(y-1) * width + x] == 1) {
+			disable_connected_pixels(ptr, x, y - 1, width, height);
+		}
+	}
+}
+
 
 int main() {
 
@@ -160,9 +184,6 @@ int main() {
 	// Retrieve raw detection values from array
 	std::vector<glm::vec2> detection_centers;
 	if (ptr) {
-		// TODO: Reduce centers to 1 per object
-		// TODO: Offset all centers by some amount (also multiply by 2 to fit the screen)
-
 		for (int i = 0; i < thermal_tex.width*thermal_tex.height; i++) {
 			int value = ptr[i];
 			int x_coord = i % thermal_tex.width;
@@ -170,6 +191,8 @@ int main() {
 			//std::cout << value;
 			if (value == 1) {
 				detection_centers.push_back(glm::vec2(x_coord, y_coord));
+				// TODO: set all connected 1s to 0s
+				disable_connected_pixels(ptr, x_coord, y_coord, thermal_tex.width, thermal_tex.height);
 			}
 		}
 		// Unmap the buffer
