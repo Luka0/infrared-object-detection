@@ -195,6 +195,7 @@ int main() {
 
 	// Retrieve raw detection values from array
 	std::vector<glm::vec2> detection_centers;
+	glm::vec2 center_offset = glm::vec2(0, 10);
 	if (ptr) {
 		for (int i = 0; i < thermal_tex.width*thermal_tex.height; i++) {
 			int value = ptr[i];
@@ -202,7 +203,7 @@ int main() {
 			int y_coord = (i - x_coord) / thermal_tex.width;
 			//std::cout << value;
 			if (value == 1) {
-				detection_centers.push_back(glm::vec2(x_coord, y_coord));
+				detection_centers.push_back(glm::vec2(x_coord, y_coord) + center_offset);
 				// TODO: set all connected 1s to 0s
 				disable_connected_pixels(ptr, x_coord, y_coord, thermal_tex.width, thermal_tex.height);
 			}
