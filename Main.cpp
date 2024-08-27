@@ -107,24 +107,36 @@ TextureData loadTextureFromJpg(const char* path, int texture_index_const) {
 
 void disable_connected_pixels(int* ptr, int x, int y, int width, int height) {
 	int index = y * width + x;
-	// disable current pixel
 	if (index < width * height) {
+		// disable current pixel
 		ptr[index] = 0;
 		// check right neighbour
-		if (x + 1 < width && ptr[y * width + x+1] == 1) {
-			disable_connected_pixels(ptr, x + 1, y, width, height);
+		int new_x = x + 1;
+		int new_y = y;
+		int new_index = new_y * width + new_x;
+		if (new_x < width && ptr[new_index] == 1) {
+			disable_connected_pixels(ptr, new_x, new_y, width, height);
 		}
 		// check left neighbour
-		if (x - 1 >= 0 && ptr[y * width + x - 1] == 1) {
-			disable_connected_pixels(ptr, x - 1, y, width, height);
+		new_x = x - 1;
+		new_y = y;
+		new_index = new_y * width + new_x;
+		if (new_x >= 0 && ptr[new_index] == 1) {
+			disable_connected_pixels(ptr, new_x, new_y, width, height);
 		}
 		// check top neighbour
-		if (y + 1 < height && ptr[(y+1) * width + x] == 1) {
-			disable_connected_pixels(ptr, x, y + 1, width, height);
+		new_x = x;
+		new_y = y + 1;
+		new_index = new_y * width + new_x;
+		if (new_y < height && ptr[new_index] == 1) {
+			disable_connected_pixels(ptr, new_x, new_y, width, height);
 		}
 		// check bottom neighbour
-		if (y - 1 >= 0 && ptr[(y-1) * width + x] == 1) {
-			disable_connected_pixels(ptr, x, y - 1, width, height);
+		new_x = x;
+		new_y = y - 1;
+		new_index = new_y * width + new_x;
+		if (new_y >= 0 && ptr[new_index] == 1) {
+			disable_connected_pixels(ptr, new_x, new_y, width, height);
 		}
 	}
 }
