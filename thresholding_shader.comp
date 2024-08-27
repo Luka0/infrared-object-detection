@@ -60,7 +60,7 @@ void main() {
 
 	// paint only grous of warm pixels (pixels surrounded by many other warm pixels in a narrow box)
 	if (countSurroundingWarmPixels(texel_coord, image_size) >= 10*10*0.8f) {
-		imageStore(output_texture, texel_coord, vec4(pixel.r, 0.0f, 1.0f, 1.0));
+		//imageStore(output_texture, texel_coord, vec4(pixel.r, 0.0f, 1.0f, 1.0));
 		outBuffer.data[texel_coord.y*image_size.x+texel_coord.x] = 1;
 	}
 	else {

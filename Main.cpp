@@ -153,21 +153,14 @@ int main() {
 	}
 
 	// load thermal image from desktop
-	//TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/hot_cups/1_67.jpg", GL_TEXTURE0);
+	TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/hot_cups/1_48.jpg", GL_TEXTURE0);
 	stbi_set_flip_vertically_on_load(true);
-	TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/drone_shots/drone_1.jpg", GL_TEXTURE0);
+	//TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/drone_shots/drone_1.jpg", GL_TEXTURE0);
 
 	// Background rectangle
 	glm::vec3 bg_position = glm::vec3(0, 0, 0);
 	glm::vec2 bg_size = glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
 	Shape2D bg_rect = ShapeGenerator::getRectangle(bg_position, bg_size);
-
-	// Detection outline
-	glm::vec3 outline_position = { WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 0.1f };
-	glm::vec2 outline_size = {200, 200};
-	Shape2D test_outline = ShapeGenerator::getOutline(outline_position, outline_size, 5);
-	test_outline = ShapeGenerator::getOutline(outline_position, glm::vec2(100, 200), 5);
-	Shape2D test_outline2 = ShapeGenerator::getOutline(outline_position, glm::vec2(100, 100), 5);
 
 	// Using the shaders
 	Shader shader_purple("shader.vert", "shader_purple.frag");
@@ -255,15 +248,9 @@ int main() {
 		for (glm::vec2 center : detection_centers)
 		{
 			center *= glm::vec2(2);
-			Shape2D detection = ShapeGenerator::getOutline(glm::vec3(center, 0.1f), glm::vec2(50, 50), 3);
+			Shape2D detection = ShapeGenerator::getOutline(glm::vec3(center, 0.1f), glm::vec2(80, 80), 3);
 			detection.draw();
 		}
-
-		//shader_red.use();
-		//test_outline.draw();
-
-		//shader_red.use();
-		//detection_outline2.draw();
 
 		// Check and call events and swap the buffers
 		glfwSwapBuffers(window);
