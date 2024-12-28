@@ -23,6 +23,11 @@ GLFWwindow* window;
 // frame timing
 float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
+float timeSinceLastImage = 0.0f;
+
+std::vector<glm::vec2> detection_centers;	// To be filled in later
+int current_image_index = 42;
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -141,31 +146,10 @@ void disable_connected_pixels(int* ptr, int x, int y, int width, int height) {
 	}
 }
 
-
-int main() {
-
-	try {
-		initialSetup();
-	}
-	catch (std::exception& e) {
-		std::cout << "Exception: " << e.what() << std::endl;
-		return -1;
-	}
-
-	// load thermal image from desktop
-	TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/hot_cups/1_48.jpg", GL_TEXTURE0);
-	stbi_set_flip_vertically_on_load(true);
-	//TextureData thermal_tex = loadTextureFromJpg("final_thesis_dataset/drone_shots/drone_1.jpg", GL_TEXTURE0);
-
-	// Background rectangle
-	glm::vec3 bg_position = glm::vec3(0, 0, 0);
-	glm::vec2 bg_size = glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
-	Shape2D bg_rect = ShapeGenerator::getRectangle(bg_position, bg_size);
-
-	// Using the shaders
-	Shader shader_purple("shader.vert", "shader_purple.frag");
-	Shader shader_red("shader.vert", "shader_red.frag");
-	Shader shader_texture("shader_texture.vert", "shader_texture.frag");
+void processThermalImage(const std::string& file_name) {
+	stbi_set_flip_vertically_on_load(false);
+	std::string full_path = "final_thesis_dataset/" + file_name;
+	TextureData thermal_tex = loadTextureFromJpg(full_path.c_str(), GL_TEXTURE0);
 
 	// Compute shader setup
 	ComputeShader thresholdComputeShader("thresholding_shader.comp");
@@ -174,7 +158,7 @@ int main() {
 	GLuint gVBO;
 	glGenBuffers(1, &gVBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, gVBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, thermal_tex.width*thermal_tex.height*sizeof(int), NULL, GL_DYNAMIC_COPY);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, thermal_tex.width * thermal_tex.height * sizeof(int), NULL, GL_DYNAMIC_COPY);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, gVBO);
 
 	glBindImageTexture(1, thermal_tex.id, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
@@ -187,10 +171,10 @@ int main() {
 	int* ptr = (int*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
 
 	// Retrieve raw detection values from array
-	std::vector<glm::vec2> detection_centers;
+	detection_centers = {};
 	glm::vec2 center_offset = glm::vec2(0, 10);
 	if (ptr) {
-		for (int i = 0; i < thermal_tex.width*thermal_tex.height; i++) {
+		for (int i = 0; i < thermal_tex.width * thermal_tex.height; i++) {
 			int value = ptr[i];
 			int x_coord = i % thermal_tex.width;
 			int y_coord = (i - x_coord) / thermal_tex.width;
@@ -207,6 +191,29 @@ int main() {
 	else {
 		printf("Failed to map buffer.\n");
 	}
+}
+
+
+
+int main() {
+
+	try {
+		initialSetup();
+	}
+	catch (std::exception& e) {
+		std::cout << "Exception: " << e.what() << std::endl;
+		return -1;
+	}
+
+	// Background rectangle
+	glm::vec3 bg_position = glm::vec3(0, 0, 0);
+	glm::vec2 bg_size = glm::vec2(WINDOW_WIDTH, WINDOW_HEIGHT);
+	Shape2D bg_rect = ShapeGenerator::getRectangle(bg_position, bg_size);
+
+	// Using the shaders
+	Shader shader_purple("shader.vert", "shader_purple.frag");
+	Shader shader_red("shader.vert", "shader_red.frag");
+	Shader shader_texture("shader_texture.vert", "shader_texture.frag");
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
@@ -218,6 +225,19 @@ int main() {
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		std::cout << "FT: " << deltaTime << " ms" << std::endl;
+		
+		// thermal image rotation logic
+		if (timeSinceLastImage > 0.5f)
+		{
+			timeSinceLastImage = 0.0f;
+			current_image_index += 1;
+			if (current_image_index > 68) { current_image_index = 42; }
+			processThermalImage("1_" + std::to_string(current_image_index) + ".jpg");
+		}
+		else {
+			timeSinceLastImage += deltaTime;
+		}
 			
 		// Setting uniform values
 		glm::mat4 projection_matrix = glm::mat4();
