@@ -13,17 +13,21 @@
 #include "ShapeGenerator.h"
 #include "ComputeShader.h"
 #include "CommonStructs.h"
+#include <iomanip>
 
 
 // window settings
 #define WINDOW_WIDTH 640 * 2
 #define WINDOW_HEIGHT 480 * 2
 GLFWwindow* window;
+GLuint gVBO;
 
 // frame timing
 float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 float timeSinceLastImage = 0.0f;
+float max_frametime = 0.0f;
+float min_frametime = 10.0f;
 
 std::vector<glm::vec2> detection_centers;	// To be filled in later
 int current_image_index = 42;
@@ -146,53 +150,6 @@ void disable_connected_pixels(int* ptr, int x, int y, int width, int height) {
 	}
 }
 
-void processThermalImage(const std::string& file_name) {
-	stbi_set_flip_vertically_on_load(false);
-	std::string full_path = "final_thesis_dataset/" + file_name;
-	TextureData thermal_tex = loadTextureFromJpg(full_path.c_str(), GL_TEXTURE0);
-
-	// Compute shader setup
-	ComputeShader thresholdComputeShader("thresholding_shader.comp");
-	thresholdComputeShader.use();
-
-	GLuint gVBO;
-	glGenBuffers(1, &gVBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, gVBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, thermal_tex.width * thermal_tex.height * sizeof(int), NULL, GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, gVBO);
-
-	glBindImageTexture(1, thermal_tex.id, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
-	glDispatchCompute(thermal_tex.width / 16, thermal_tex.height / 16, 1);
-	glMemoryBarrier(GL_ALL_BARRIER_BITS);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
-
-	// fetching output data from compute shader
-	glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-	int* ptr = (int*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
-
-	// Retrieve raw detection values from array
-	detection_centers = {};
-	glm::vec2 center_offset = glm::vec2(0, 10);
-	if (ptr) {
-		for (int i = 0; i < thermal_tex.width * thermal_tex.height; i++) {
-			int value = ptr[i];
-			int x_coord = i % thermal_tex.width;
-			int y_coord = (i - x_coord) / thermal_tex.width;
-			//std::cout << value;
-			if (value == 1) {
-				detection_centers.push_back(glm::vec2(x_coord, y_coord) + center_offset);
-				// TODO: set all connected 1s to 0s
-				disable_connected_pixels(ptr, x_coord, y_coord, thermal_tex.width, thermal_tex.height);
-			}
-		}
-		// Unmap the buffer
-		glUnmapBuffer(GL_ARRAY_BUFFER);
-	}
-	else {
-		printf("Failed to map buffer.\n");
-	}
-}
-
 
 
 int main() {
@@ -214,26 +171,79 @@ int main() {
 	Shader shader_purple("shader.vert", "shader_purple.frag");
 	Shader shader_red("shader.vert", "shader_red.frag");
 	Shader shader_texture("shader_texture.vert", "shader_texture.frag");
+	ComputeShader thresholdComputeShader("thresholding_shader.comp");
 
 	// RENDER LOOP
 	while (!glfwWindowShouldClose(window))
 	{
 
+		float time_before = glfwGetTime();	// PERFORMANCE TRACKING START
+		
 		processInput(window);
 
 		// Delta time
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		std::cout << "FT: " << deltaTime << " ms" << std::endl;
 		
 		// thermal image rotation logic
 		if (timeSinceLastImage > 0.5f)
 		{
+
 			timeSinceLastImage = 0.0f;
 			current_image_index += 1;
 			if (current_image_index > 68) { current_image_index = 42; }
-			processThermalImage("1_" + std::to_string(current_image_index) + ".jpg");
+
+
+			// PROCESS CURRENT THERMAL IMAGE
+			
+			stbi_set_flip_vertically_on_load(false);
+			std::string file_name = "1_" + std::to_string(current_image_index) + ".jpg";
+			std::string full_path = "final_thesis_dataset/" + file_name;
+			TextureData thermal_tex = loadTextureFromJpg(full_path.c_str(), GL_TEXTURE0);
+
+			// initial buffer generation (happens only once)
+			glGenBuffers(1, &gVBO);
+			glBindBuffer(GL_SHADER_STORAGE_BUFFER, gVBO);
+			glBufferData(GL_SHADER_STORAGE_BUFFER, thermal_tex.width * thermal_tex.height * sizeof(int), NULL, GL_DYNAMIC_COPY);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, gVBO);
+
+			thresholdComputeShader.use();
+			glBindImageTexture(1, thermal_tex.id, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
+			glDispatchCompute(thermal_tex.width / 16, thermal_tex.height / 16, 1);
+			glMemoryBarrier(GL_ALL_BARRIER_BITS);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
+
+			// fetching output data from compute shader
+			glBindBuffer(GL_ARRAY_BUFFER, gVBO);
+			int* ptr = (int*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+
+			// Retrieve raw detection values from array
+			detection_centers = {};
+			glm::vec2 center_offset = glm::vec2(0, 10);
+			if (ptr) {
+				for (int i = 0; i < thermal_tex.width * thermal_tex.height; i++) {
+					int value = ptr[i];
+					int x_coord = i % thermal_tex.width;
+					int y_coord = (i - x_coord) / thermal_tex.width;
+					//std::cout << value;
+					if (value == 1) {
+						detection_centers.push_back(glm::vec2(x_coord, y_coord) + center_offset);
+						// TODO: set all connected 1s to 0s
+						disable_connected_pixels(ptr, x_coord, y_coord, thermal_tex.width, thermal_tex.height);
+					}
+				}
+				// Unmap the buffer
+				glUnmapBuffer(GL_ARRAY_BUFFER);
+			}
+			else {
+				printf("Failed to map buffer.\n");
+			}
+
+			// Memory leak fix attempts
+			glUnmapBuffer(GL_ARRAY_BUFFER);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0); // Unbind buffer base
+			glBindImageTexture(1, 0, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8); // Unbind
 		}
 		else {
 			timeSinceLastImage += deltaTime;
@@ -263,7 +273,7 @@ int main() {
 		shader_texture.use();
 		bg_rect.draw();
 
-		// test
+		// Draw detection outlines
 		shader_red.use();
 		for (glm::vec2 center : detection_centers)
 		{
@@ -275,6 +285,20 @@ int main() {
 		// Check and call events and swap the buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		// Memory leak fix
+		glDeleteBuffers(1, &gVBO);
+
+
+		float time_after = glfwGetTime();	// PERFORMANCE TRACKING STOP
+		float current_frametime = time_after - time_before;
+		if (current_frametime > max_frametime) { max_frametime = current_frametime; }
+		if (current_frametime < min_frametime) { min_frametime = current_frametime; }
+		std::cout << std::fixed << std::setprecision(4) // Ensure all floats have 4 decimal places
+			<< "FT: " << current_frametime << " s "
+			<< "(MAX=" << max_frametime << ") "
+			<< "(MIN=" << min_frametime << ")"
+			<< std::endl;
 	}
 
 	// Clears all GLFW allocated resources
